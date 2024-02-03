@@ -7,6 +7,11 @@ from pygame.locals import *
 from pygame import gfxdraw
 import numpy as np
 
+import cv2
+from google.colab.patches import cv2_imshow
+from google.colab import output
+
+from PIL import Image
 
 def draw_circle(surface, x, y, radius, color, bordercolor = None):
     x = int(x)
@@ -1407,6 +1412,14 @@ class Game:
         if self.use_LCD_display: self.LCD_display.render(self._screen)
 
         pygame.display.flip()
+
+        # Convert the Pygame surface to an image displayable in Colab
+        view = pygame.surfarray.array3d(pygame.display.get_surface())
+        view = view.transpose([1, 0, 2])  # Convert from (width, height, channel) to (height, width, channel)
+        img_bgr = cv2.cvtColor(view, cv2.COLOR_RGB2BGR)  # Convert from RGB to BGR
+        cv2_imshow(img_bgr)  # Display the image
+        output.clear(wait=True)  # Clear the output to avoid flooding the cell
+
 
     def cleanup(self):
         pygame.quit()
